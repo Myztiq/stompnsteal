@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Stomp N' Steal</title>
+	<style type="text/css">
+		html,body {
+			background-color: #333;
+			color: #fff;
+			font-family: helvetica, arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			font-size: 12pt;
+		}
+	</style>
+
+  <script type="text/javascript" src="soundManager2/soundmanager2.js"></script>
+  <script>
+    soundManager.url = 'soundManager2/soundmanager2.swf';
+    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
+    soundManager.defaultOptions.volume = 30;
+    soundManager.useHighPerformance = true;
+    soundManager.debugMode = false;
+    soundManager.consoleOnly = true;
+  </script>
+
+	<!-- We advise mobile browser to leave the page unscaled; If scaling is 
+		neccessary, we will do it in the canvas element itself. 
+		Also make sure to hide address bar and navigation buttons and make the 
+		status bar transparent on iOS -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	
+	<script type="text/javascript" src="baked.js"></script>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+</body>
+</html>
