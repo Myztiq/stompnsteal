@@ -7,8 +7,8 @@ ig.module(
 .defines(function(){
 
 EntityBlob = ig.Entity.extend({
-  size: {x: 16, y: 32},
-  offset: {x: 8, y: 0},
+  size: {x: 16, y: 40},
+  offset: {x: 8, y: 8},
   maxVel: {x: 160, y: 700},
   friction: {x: 800, y: 0},
 
@@ -23,7 +23,7 @@ EntityBlob = ig.Entity.extend({
   speed: 60,
   flip: false,
 
-  animSheet: new ig.AnimationSheet( 'media/player.png', 32, 32 ),
+  animSheet: new ig.AnimationSheet( 'media/Boss_Sheet.png', 48, 48 ),
   sfxRing: new ig.Sound( 'media/sounds/phone/ring.ogg' ),
 
   isStunned: false,
@@ -41,16 +41,17 @@ EntityBlob = ig.Entity.extend({
 
     var idleRaw = [0];
     var runRaw = [0,1,2,3,4,5,6,7,8];
-    var jumpRaw = [21];
-    var fallRaw = [22,23,24,25];
-    var squishRaw = [18,19,20];
-    var squishOutRaw = [20, 19, 18]
+    var jumpRaw = [12];
+    var fallRaw = [13,14,15,16];
+
+    var squishRaw = [9,10,11];
+    var squishOutRaw = [11, 10, 9];
 
 
     var processOffest = function(offset, source, target){
-      var itemsInRow = 18;
+      var itemsInRow = 9;
       for(var i=0;i<source.length;i++){
-        target[i] = source[i] + (offset-1) * itemsInRow * 3 + (9); //Adding +9 to everything because this is BLOB!
+        target[i] = source[i] + (offset-1) * itemsInRow * 3 + itemsInRow * 3;
       }
     }
 
@@ -182,7 +183,7 @@ EntityBlob = ig.Entity.extend({
   },
 
   changeAllegiance: function( player ) {
-    this.allegiance = player + 1;
+    this.allegiance = player;
 
     this.sfxRing.getSound().setVolume(5 );
     this.sfxRing.play();

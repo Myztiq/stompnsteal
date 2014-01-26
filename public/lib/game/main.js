@@ -12,6 +12,7 @@ ig.module(
 
   'game.entities.player',
   'game.entities.blob',
+  'game.entities.ring',
 
   'game.levels.title',
   'game.levels.groundzero_1',
@@ -38,7 +39,10 @@ MyGame = ig.Game.extend({
 
   music: new ig.Sound( 'media/sounds/music.ogg' ),
 
+  sfxWin: new ig.Sound( 'media/sounds/win/win.ogg' ),
+
   victoryMessage: '',
+  winPlayed: false,
 
   gameTimer: null,
   gameLength: 180, // In seconds
@@ -48,6 +52,7 @@ MyGame = ig.Game.extend({
   freeAgent: null,
   colorChanges: [],
   colorChangeTimer: null,
+  colorChangeNotificationTimer: null,
 
   init: function() {
     // We want the font's chars to slightly touch each other,
@@ -96,21 +101,8 @@ MyGame = ig.Game.extend({
     this.camera = new ig.Camera();
 
 
-    var livingEntities = []
-    var entities = this.getEntitiesByType('EntityPlayer');
-    for(var i=0;i<window.activePlayerCount;i++){
-      for(var j=0;j<entities.length;j++){
-        var entity = entities[j]
-        if(entity.controller == (4-i)){
-          livingEntities.push(entity)
-        }
-      }
-    }
-
-
+    var livingEntities = this.getEntitiesByType('EntityPlayer');
     this.camera.follow(livingEntities.concat(this.getEntitiesByType('EntityBlob')))
-
-
   },
 
   loadLevel: function( data ) {
@@ -126,14 +118,12 @@ MyGame = ig.Game.extend({
     this.screen.y = 16*7;
 
 
-    var numberToKill = 4 - window.activePlayerCount;
     var entities = this.getEntitiesByType('EntityPlayer');
-    for(var i=0;i<numberToKill;i++){
-      for(var j=0;j<entities.length;j++){
-        var entity = entities[j]
-        if(entity.controller == (4-i)){
-          entity.kill()
-        }
+
+    for(var j=0;j<entities.length;j++){
+      var entity = entities[j]
+      if(!window.currentPlayerStatus[entity.controller]){
+        entity.kill()
       }
     }
 
@@ -167,7 +157,7 @@ MyGame = ig.Game.extend({
     var colorChanges = [];
     while (!timePerPlayerMap.hasAllocatedAllTime()) {
       for(var i=0;i<activePlayerCount;i++){
-        var randomTime = randomInt(1, 11);
+        var randomTime = randomInt(3, 11);
         if (timePerPlayerMap[i] > 0) {
           randomTime = Math.min(randomTime, timePerPlayerMap[i]);
           timePerPlayerMap[i] -= randomTime;
@@ -192,7 +182,15 @@ MyGame = ig.Game.extend({
     if ((!this.colorChangeTimer || this.colorChangeTimer.delta() >= 0) && this.colorChanges.length > 0) {
       var colorChange = this.colorChanges.shift();
       this.colorChangeTimer = new ig.Timer(colorChange.duration);
-      this.freeAgent.changeAllegiance(colorChange.player);
+      if (colorChange.player != this.colorChanges[0].player) {
+        this.colorChangeNotificationTimer = new ig.Timer(colorChange.duration - 2);
+      }
+      var player = this.getEntitiesByType('EntityPlayer')[colorChange.player];
+      this.freeAgent.changeAllegiance(player.controller);
+    }
+    if (this.colorChangeNotificationTimer && this.colorChangeNotificationTimer.delta() >= 0) {
+      ig.game.spawnEntity(EntityRing, this.freeAgent.pos.x + 13, this.freeAgent.pos.y - 13, {player: this.freeAgent} );
+      this.colorChangeNotificationTimer = null;
     }
 
     // Only update entities if the game isn't over
@@ -200,6 +198,10 @@ MyGame = ig.Game.extend({
       this.parent();
     }else {
 
+      if(!this.winPlayed){
+        this.winPlayed = true
+        this.sfxWin.play()
+      }
       this.camera.preDraw()
       this.draw()
       this.camera.draw()
@@ -267,7 +269,8 @@ MyGame = ig.Game.extend({
       }
     })
 
-    players.forEach(function(player, i) {
+    players.forEach(function(player) {
+      var i = player.controller-1;
       var align = scorePositions[i].icon.flip ? ig.Font.ALIGN.RIGHT : ig.Font.ALIGN.LEFT;
       var xPosition = scorePositions[i].icon.flip ? scorePositions[i].x + 77 : scorePositions[i].x;
       this.newFont.draw('$'+player.coins+'L', xPosition, scorePositions[i].y, align);
@@ -359,6 +362,15 @@ MyTitle = ig.Game.extend({
 
   // Load a font
   font: new ig.Font( 'media/fredoka-one.font.png' ),
+  music: new ig.Sound( 'media/sounds/title/TitleMusic.ogg' ),
+  sfxJoin: new ig.Sound( 'media/sounds/join/join.ogg' ),
+
+  playerStatus: {
+    1: false,
+    2: false,
+    3: false,
+    4: false
+  },
 
   init: function() {
     // Bind keys
@@ -393,6 +405,7 @@ MyTitle = ig.Game.extend({
       [ 'start', 'start' ]
     ];
 
+    this.music.play()
   },
 
   update: function() {
@@ -401,6 +414,9 @@ MyTitle = ig.Game.extend({
     var players = this.getEntitiesByType('EntityPlayer')
     for(var i=0;i<5;i++){
       if(ig.input.pressed('addPlayer'+i)){
+        this.playerStatus[i] = true
+        this.sfxJoin.getSound().setVolume(5 );
+        this.sfxJoin.play()
         for(var j=0;j<players.length;j++){
           if(players[j].controller == i){
             players[j].active = true
@@ -411,6 +427,7 @@ MyTitle = ig.Game.extend({
 
 
     if(ig.input.pressed('start')){
+      this.music.stop()
       var entities = this.getEntitiesByType('EntityPlayer');
       var activeCount = 0;
       for(var i=0; i< entities.length; i++){
@@ -421,6 +438,7 @@ MyTitle = ig.Game.extend({
 
       if(activeCount > 1){
         window.activePlayerCount = activeCount;
+        window.currentPlayerStatus = this.playerStatus;
         ig.system.setGame( MyGame );
         return;
       }else{
@@ -430,6 +448,7 @@ MyTitle = ig.Game.extend({
 
     // Check for buttons; start the game if pressed
     if( ig.input.pressed('jump') || ig.input.pressed('shoot') ) {
+      this.music.stop()
       window.activePlayerCount = 4;
       ig.system.setGame( MyGame );
       return;

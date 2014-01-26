@@ -242,8 +242,10 @@ EntityPlayer = ig.Entity.extend({
 
         ig.game.spawnEntity(EntityDollabill, this.pos.x + 1, this.pos.y - 18, {player: this} );
 
-        for (var i = 0; i < 20; i++) {
-          ig.game.spawnEntity(EntityCashmonies, this.pos.x, this.pos.y, {} );
+        for (var i = 0; i < 10; i++) {
+          setTimeout(function() {
+            ig.game.spawnEntity(EntityCashmonies, other.pos.x, other.pos.y + 16, {} );
+          }, Math.random()*100);
         }
       }
       else {

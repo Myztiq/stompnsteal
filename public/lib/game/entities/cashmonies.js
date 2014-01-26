@@ -10,14 +10,16 @@ ig.module(
 EntityCashmonies = ig.Entity.extend({
 
   size: {x: 16, y: 16},
-  //gravityFactor: 0,
-  animSheet: new ig.AnimationSheet( 'media/dollabill.png', 16, 16 ),
-  lifeSpan: 1, // seconds
+  gravityFactor: 0.1,
+  animSheet: new ig.AnimationSheet( 'media/cashmonies.png', 16, 16 ),
+  lifeSpan: 2, // seconds
   lifeSpanTimer: null,
+  maxVel: {x: 200, y: 200},
 
   init: function( x, y, settings ) {
     this.parent( x, y, settings );
-    this.addAnim( 'idle', 0.15, [0, 1, 2, 3, 4, 5, 6] );
+    this.addAnim( 'anim1', 0.1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] );
+    this.addAnim( 'anim2', 0.1, [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27] );
     this.reset(x,y,settings)
   },
 
@@ -25,8 +27,8 @@ EntityCashmonies = ig.Entity.extend({
     this.parent( x, y, settings );
     this.lifeSpanTimer = new ig.Timer( this.lifeSpan );
 
-    this.vel.x = randomInt(0, 401) - 200;
-    this.vel.y = randomInt(50, 100);
+    this.vel.x = randomInt(0, 101) - 50;
+    this.vel.y = randomInt(50, 81) * -1;
   },
 
   update: function() {
@@ -37,7 +39,7 @@ EntityCashmonies = ig.Entity.extend({
       this.kill();
     }
 
-    this.currentAnim = this.anims.idle;
+    this.currentAnim = this.anims[randomElement(['anim1', 'anim2'])];
   },
 
   handleMovementTrace: function( res ) {
@@ -50,6 +52,11 @@ ig.EntityPool.enableFor( EntityCashmonies );
 // Utility functions
 function randomInt(lowerBound, upperBound) {
   return lowerBound + Math.floor(Math.random()*upperBound);
+}
+
+function randomElement( myArray ) {
+  var item = myArray[Math.floor(Math.random()*myArray.length)];
+  return item;
 }
 
 });
