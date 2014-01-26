@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Stomp N' Steal</title>
-	<style type="text/css">
-		html,body {
-			background-color: #333;
-			color: #fff;
-			font-family: helvetica, arial, sans-serif;
-			margin: 0;
-			padding: 0;
-			font-size: 12pt;
-		}
-	</style>
+  <title>Stomp N' Steal</title>
+  <style type="text/css">
+    html,body {
+      background-color: #333;
+      color: #fff;
+      font-family: helvetica, arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-size: 12pt;
+    }
+    .overlay{
+      text-align: center;
+      padding: 30px;
+    }
+    .overlay.active{
+      display: block;
+    }
+    a{
+      color: white;
+    }
+  </style>
 
   <script type="text/javascript" src="soundManager2/soundmanager2.js"></script>
   <script>
@@ -23,17 +33,29 @@
     soundManager.consoleOnly = true;
   </script>
 
-	<!-- We advise mobile browser to leave the page unscaled; If scaling is 
-		neccessary, we will do it in the canvas element itself. 
-		Also make sure to hide address bar and navigation buttons and make the 
-		status bar transparent on iOS -->
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-	
-	<script type="text/javascript" src="baked.js"></script>
+  <!-- We advise mobile browser to leave the page unscaled; If scaling is
+    neccessary, we will do it in the canvas element itself.
+    Also make sure to hide address bar and navigation buttons and make the
+    status bar transparent on iOS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <script type="text/javascript" src="baked.js"></script>
 </head>
 <body>
-	<canvas id="canvas"></canvas>
+<canvas id="canvas"></canvas>
+
+<div class="overlay">
+  James Ard - Sound
+  <br/>
+  <a href="http://ryan-kahn.com" target="_blank">Ryan Kahn</a> - Programmer
+  <br/>
+  <a target="_blank" href="http://blackboxpixels.tumblr.com">Jherin Miller</a> - Artist
+  <br/>
+  <a target="_blank" href="http://www.guynoren.com">Guy Noren</a> - Level Art/Design/Layout
+  <br/>
+  <a target="_blank" href="http://www.strayharbor.com/">Duy Tran</a> - Programmer
+</div>
 </body>
 </html>
