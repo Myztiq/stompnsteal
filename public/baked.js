@@ -443,7 +443,7 @@ if(ig.input.pressed('start')){this.music.stop()
 var entities=this.getEntitiesByType('EntityPlayer');var activeCount=0;for(var i=0;i<entities.length;i++){if(entities[i].active){activeCount++;}}
 if(activeCount>1){window.activePlayerCount=activeCount;window.currentPlayerStatus=this.playerStatus;ig.system.setGame(MyGame);return;}else{this.showWarning=true;}}
 if(ig.input.pressed('jump')||ig.input.pressed('shoot')){this.music.stop()
-window.activePlayerCount=4;ig.system.setGame(MyGame);return;}
+window.activePlayerCount=4;window.currentPlayerStatus={1:true,2:true,3:true,4:true};ig.system.setGame(MyGame);return;}
 this.parent();},draw:function(){this.parent();var cx=ig.system.width/2;if(this.showWarning){this.font.draw('You need at least two players!',ig.system.width/2,70,ig.Font.ALIGN.CENTER);}
 this.font.draw('Press A to join. Press Start to begin',cx,20,ig.Font.ALIGN.CENTER);}});var scale=1/2;var scaleCanvas=function(){var canvas=document.getElementById('canvas');canvas.style.width='100%';var scaledX=window.innerWidth/gameWidth;if((gameHeight*scaledX)<window.innerHeight){canvas.style.width='100%';canvas.style.height=gameHeight*scaledX+'px';canvas.style.marginTop=(window.innerHeight/2-gameHeight*scaledX/2)+'px'}else{var scaledY=window.innerHeight/gameHeight;canvas.style.height='100%';canvas.style.width=gameWidth*scaledY+'px';canvas.style.marginLeft=(window.innerWidth/2-gameWidth*scaledY/2)+'px'}}
 scaleCanvas()
